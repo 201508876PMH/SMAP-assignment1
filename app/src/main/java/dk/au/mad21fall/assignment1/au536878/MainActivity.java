@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -77,9 +78,17 @@ public class MainActivity extends AppCompatActivity implements MovieAdaptor.IMov
         }
     }
 
+    //callback when a person item is clicked in the list
     @Override
     public void onMovieClicked(int index) {
-
+        Intent i =  new Intent(this, DetailedActivity.class);
+        Movie movieObject = movies.get(index);
+        i.putExtra("movieName",movieObject.name);
+        i.putExtra("movieYear",movieObject.year);
+        i.putExtra("movieRating",movieObject.rating);
+        i.putExtra("moviePlot",movieObject.plot);
+        i.putExtra("movieGenre",movieObject.genre);
+        startActivity(i);
     }
 
     @Override
