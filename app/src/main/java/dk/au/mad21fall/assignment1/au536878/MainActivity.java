@@ -7,6 +7,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 
 import java.io.BufferedReader;
 import java.io.Console;
@@ -22,6 +24,7 @@ public class MainActivity extends AppCompatActivity implements MovieAdaptor.IMov
     //widgets
     private RecyclerView rcvList;
     private MovieAdaptor adaptor;
+    private Button bttnExit;
 
     //data
     private ArrayList<Movie> movies = new ArrayList<>();
@@ -39,6 +42,9 @@ public class MainActivity extends AppCompatActivity implements MovieAdaptor.IMov
 
         loadCSV();
         adaptor.updateMovieList(movies);
+
+        bttnExit = findViewById(R.id.bttnExit);
+        bttnExit.setOnClickListener((view -> finish()));
     }
 
     public void loadCSV(){
@@ -83,16 +89,12 @@ public class MainActivity extends AppCompatActivity implements MovieAdaptor.IMov
     public void onMovieClicked(int index) {
         Intent i =  new Intent(this, DetailedActivity.class);
         Movie movieObject = movies.get(index);
-        i.putExtra("movieName",movieObject.name);
-        i.putExtra("movieYear",movieObject.year);
-        i.putExtra("movieRating",movieObject.rating);
-        i.putExtra("moviePlot",movieObject.plot);
-        i.putExtra("movieGenre",movieObject.genre);
+        i.putExtra("movieName", movieObject.name);
+        i.putExtra("movieYear", movieObject.year);
+        i.putExtra("movieRating", movieObject.rating);
+        i.putExtra("moviePlot", movieObject.plot);
+        i.putExtra("movieGenre", movieObject.genre);
+        i.putExtra("movieIcon", String.valueOf(movieObject.getResourceIdFromGenre()));
         startActivity(i);
-    }
-
-    @Override
-    public void sendInvite(Movie movie) {
-
     }
 }

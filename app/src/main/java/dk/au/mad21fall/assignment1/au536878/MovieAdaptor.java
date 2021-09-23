@@ -17,7 +17,6 @@ public class MovieAdaptor extends RecyclerView.Adapter<MovieAdaptor.MovieViewHol
     //interface for handling when a Movie item is clicked in various ways
     public interface IMovieItemClickedListener{
         void onMovieClicked(int index);
-        void sendInvite(Movie movie);
     }
 
     //callback interface for movie actions on each item

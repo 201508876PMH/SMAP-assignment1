@@ -3,4 +3,5 @@
     <string name="txtName">name</string>
     <string name="txtYear" />
     <string name="txtRating" />
+    <string name="activity_rating_txtBarUserRating" />
 </resources>
