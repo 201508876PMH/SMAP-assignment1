@@ -55,7 +55,7 @@ public class MovieAdaptor extends RecyclerView.Adapter<MovieAdaptor.MovieViewHol
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
         holder.txtName.setText(movieList.get(position).name);
         holder.txtYear.setText(movieList.get(position).year);
-        holder.txtIMBD.setText(movieList.get(position).rating);
+        holder.txtIMBD.setText(movieList.get(position).userRating);
         holder.imgIcon.setImageResource(movieList.get(position).getResourceIdFromGenre());
     }
 
@@ -65,10 +65,8 @@ public class MovieAdaptor extends RecyclerView.Adapter<MovieAdaptor.MovieViewHol
         //viewholder ui widgets references
         ImageView imgIcon;
         TextView txtName;
-        TextView txtGenre;
         TextView txtYear;
         TextView txtIMBD;
-        TextView txtPlot;
 
         //custom callback interface for user actions done to the view holder item
         IMovieItemClickedListener listener;
@@ -80,10 +78,7 @@ public class MovieAdaptor extends RecyclerView.Adapter<MovieAdaptor.MovieViewHol
             imgIcon = itemView.findViewById(R.id.imageMovieIcon);
             txtName = itemView.findViewById(R.id.textMovieTitle);
             txtYear = itemView.findViewById(R.id.textMovieYear);
-            txtIMBD = itemView.findViewById(R.id.textMovieRating);
-            //this.txtIMBD = txtIMBD;
-            //this.txtMovieResourceId = txtMovieResourceId;
-            //this.txtPlot = txtPlot;
+            txtIMBD = itemView.findViewById(R.id.list_item_MovieRating);
             listener = movieItemClickedListener;
 
             //set click listener for whole list item

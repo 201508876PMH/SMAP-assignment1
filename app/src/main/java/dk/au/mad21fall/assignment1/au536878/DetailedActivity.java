@@ -1,5 +1,7 @@
 package dk.au.mad21fall.assignment1.au536878;
 
+import static dk.au.mad21fall.assignment1.au536878.IntentTransferHelper.constructMovieDataFromIntent;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -12,6 +14,8 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 public class DetailedActivity extends AppCompatActivity {
 
@@ -20,8 +24,9 @@ public class DetailedActivity extends AppCompatActivity {
             movieGenre, moviePlot, userRating, userNotes;
     ImageView movieIcon;
 
-    Bundle mainActivityExtra;
     Bundle ratingActivityExtra;
+    private MovieViewModel m;
+
     ActivityResultLauncher<Intent> resultFromRatingActivity;
 
     @Override
@@ -29,21 +34,34 @@ public class DetailedActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.details_activity);
 
-        bttnBack = findViewById(R.id.bttnBack);
-        bttnBack.setOnClickListener((view -> finish()));
+        instantiateUIFields();
 
-        bttnRate = findViewById(R.id.bttnRate);
-        bttnRate.setOnClickListener((view -> onRateClick()));
+        Movie movie = IntentTransferHelper.constructMovieDataFromIntent(getIntent());
 
+        m = new ViewModelProvider(this).get(MovieViewModel.class);
+        m.instantiateMovieModel(movie);
+        m.getMovieData().observe(this, new Observer<Movie>() {
+            @Override
+            public void onChanged(Movie movie) {
+                updateUIFields();
+            }
+        });
 
         resultFromRatingActivity = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(),new ActivityResultRatingHandler());
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        mainActivityExtra = getIntent().getExtras();
+    protected void updateUIFields(){
+        movieTitle.setText(m.getMovieData().getValue().name);
+        movieYear.setText(m.getMovieData().getValue().year);
+        movieGenre.setText(m.getMovieData().getValue().genre);
+        movieRating.setText(m.getMovieData().getValue().movieRating);
+        moviePlot.setText(m.getMovieData().getValue().plot);
+        userRating.setText(m.getMovieData().getValue().userRating);
+        userNotes.setText(m.getMovieData().getValue().userNotes);
+        movieIcon.setImageResource(m.getMovieData().getValue().getResourceIdFromGenre());
+    }
 
+    protected void instantiateUIFields(){
         movieTitle = findViewById(R.id.textMovieTitleDetailedView);
         movieYear = findViewById(R.id.textMovieYearDetailedView);
         movieGenre = findViewById(R.id.textMovieGenreDetailedView);
@@ -53,42 +71,34 @@ public class DetailedActivity extends AppCompatActivity {
         userRating = findViewById(R.id.details_activity_userRating);
         userNotes = findViewById(R.id.txtUsernotes);
 
-        movieTitle.setText(mainActivityExtra.getString("movieName"));
-        movieYear.setText(mainActivityExtra.getString("movieYear"));
-        movieGenre.setText(mainActivityExtra.getString("movieGenre"));
-        movieRating.setText(mainActivityExtra.getString("movieRating"));
-        moviePlot.setText(mainActivityExtra.getString("moviePlot"));
+        bttnBack = findViewById(R.id.bttnBack);
+        bttnBack.setOnClickListener((view -> onBackClick()));
 
-        movieIcon.setImageResource(Integer.parseInt(mainActivityExtra.getString("movieIcon")));
+        bttnRate = findViewById(R.id.bttnRate);
+        bttnRate.setOnClickListener((view -> onRateClick()));
     }
 
     protected void onRateClick(){
-       Intent i =  new Intent(this, RatingActivity.class);
+        Intent intentResult = IntentTransferHelper.prepareIntentFromMovieData(m.getMovieData().getValue(), this, RatingActivity.class);
+        resultFromRatingActivity.launch(intentResult);
+    }
 
-        i.putExtra("movieName", mainActivityExtra.getString("movieName"));
-        i.putExtra("movieIcon", mainActivityExtra.getString("movieIcon"));
-        if(ratingActivityExtra != null){
-            String tis = ratingActivityExtra.getString("userRating");
-
-            i.putExtra("userRating", ratingActivityExtra.getString("userRating"));
-            i.putExtra("userNotes", ratingActivityExtra.getString("userNotes"));
-        }else{
-            i.putExtra("userRating", "0");
-            i.putExtra("userNotes", "");
-        }
-        Log.d("DETAILED", mainActivityExtra.getString("movieIcon"));
-        resultFromRatingActivity.launch(i);
+    protected void onBackClick(){
+        Intent i = IntentTransferHelper.prepareIntentFromMovieData(m.getMovieData().getValue());
+        setResult(RESULT_OK,i);
+        finish();
     }
 
     private class ActivityResultRatingHandler implements ActivityResultCallback<ActivityResult>{
 
         @Override
         public void onActivityResult(ActivityResult result) {
-            Intent data = result.getData();
             if(result.getResultCode() == RESULT_OK) {
-                userRating.setText(data.getStringExtra("userRating"));
-                userNotes.setText(data.getStringExtra("userNotes"));
+                Intent data = result.getData();
+                Movie movieObject;
+                movieObject = constructMovieDataFromIntent(data);
 
+                m.setMovieData(movieObject);
                 ratingActivityExtra = data.getExtras();
             }
         }

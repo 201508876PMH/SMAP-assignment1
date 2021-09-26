@@ -7,16 +7,22 @@ public class Movie {
     public String name;
     public String genre;
     public String year;
-    public String rating;
+    public String movieRating;
     public String plot;
+    public String userNotes;
+    public String userRating;
+    public String index;
 
-    public Movie(String name, String genre, String year, String rating, String plot) {
+    public Movie(String name, String genre, String year, String movieRating, String plot, String userNotes, String userRating) {
         this.name = name;
         this.genre = genre;
         this.year = year;
-        this.rating = rating;
+        this.movieRating = movieRating;
         this.plot = plot;
+        this.userNotes = userNotes;
+        this.userRating = userRating;
     }
+    public Movie(){}
 
     public int getResourceIdFromGenre(){
         switch(genre.toLowerCase(Locale.ROOT)) {

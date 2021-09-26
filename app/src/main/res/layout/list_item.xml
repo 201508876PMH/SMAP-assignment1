@@ -44,7 +44,7 @@
         tools:text="year" />
 
     <TextView
-        android:id="@+id/textMovieRating"
+        android:id="@+id/list_item_MovieRating"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
